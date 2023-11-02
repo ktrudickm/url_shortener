@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Response, status, HTTPException
+from fastapi import APIRouter, status, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 import validators
@@ -32,7 +32,7 @@ def get_original_url(short_url: str):
     if Database.exists(short_url):
         return Database.get(short_url)
     else:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No URL for short url: `{short_url}` found.")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"No URL for short url: `{short_url}` found.")
 
 # POST /shorten_url(url, short_url: optional) : This endpoint creates a shortened version of a given URL. 
 # Optionally, users can also provide a custom short_url
@@ -41,15 +41,19 @@ def get_original_url(short_url: str):
 def shorten_url(url: URL):
     # Check if the short url is already in the database
     if url.short_url and Database.exists(url.short_url):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Short URL {url.short_url} already exists. Try a different short url.")   
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Short URL {url.short_url} already exists. Try a different short url.")   
 
     # Check if the url is a valid url
     if not validators.url(url.long_url):
         return {"Error": "Invalid URL"}
     
-    # Generate a short url if not provided
+    # Generate a short url if not provided - making sure it is unique
     if not url.short_url:
-        url.short_url = generate_short_url(url.long_url)
+        short = generate_short_url(url.long_url)
+        while Database.exists(short):
+            short = generate_short_url(url.long_url)
+        url.short_url = short
+
 
     # Add the urls to the database
     Database.create(url.short_url, url.long_url)

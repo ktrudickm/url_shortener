@@ -17,11 +17,18 @@ class Database(URLModel):
         URLModel(short_url=short_url, long_url=long_url).save()
     
 
-    def exists(short_url):
-        response = connection.get_item(table_name=table, hash_key=short_url)
-        if not 'Item' in response:
-            return False
-        else:
-            return True
+    # def exists(short_url):
+    #     response = connection.get_item(table_name=table, hash_key=short_url)
+    #     if not 'Item' in response:
+    #         return False
+    #     else:
+    #         return True
  
 
+    def exists(short_url):
+        try:
+            response = connection.get_item(table_name=table, hash_key=short_url)
+            return 'Item' in response
+        except DoesNotExist:
+            return False
+ 
