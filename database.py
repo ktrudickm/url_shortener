@@ -1,26 +1,27 @@
 from model import URLModel
-from pynamodb.connection import TableConnection
+from pynamodb.connection import Connection
+from pynamodb.exceptions import DoesNotExist
 
+table = URLModel.Meta.table_name
+connection = Connection(host='http://localhost:8000')
 
-# if not URLModel.exists():
-#     URLModel.create_table(read_capacity_units=1, write_capacity_units=1)
+class Database(URLModel):
+    def list_urls():
+        return URLModel.scan()
 
-class Database:
-    def __init__(self):
-        self.table = URLModel
-        self.connection = TableConnection(self.table.Meta.table_name)
+    def get(short_url: str):
+        response = connection.get_item(table_name=table, hash_key=short_url)
+        return response["Item"]['long_url']
 
-    def create(self, short_url, long_url):
-        self.table(short_url, long_url).save()
+    def create(short_url: str, long_url: str):
+        URLModel(short_url=short_url, long_url=long_url).save()
+    
 
-    def get(self, short_url):
-        return self.table.get(short_url)
-
-    def list(self):
-        return self.connection.scan()
-
-    def exists(self, short_url):
-        return self.table.exists(short_url)
-
-
+    def exists(short_url):
+        response = connection.get_item(table_name=table, hash_key=short_url)
+        if not 'Item' in response:
+            return False
+        else:
+            return True
+ 
 

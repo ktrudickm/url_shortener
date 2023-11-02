@@ -2,7 +2,8 @@ from fastapi import APIRouter, Response, status, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 import validators
-from uuid_generator import generate_short_url
+from utils.uuid_generator import generate_short_url
+from database import Database
 
 router = APIRouter()
 
@@ -22,15 +23,16 @@ def read_root():
 # GET /list_urls → This endpoint returns a list of all the shortened URLs.
 @router.get('/list_urls')
 def list_urls():
-    return {"message": f"These are all the shortened urls. {temp_db}"}
+    return Database.list_urls()
 
 # GET /redirect(short_url) → This endpoint takes a short_url as a parameter and returns the original URL.
 @router.get('/redirect/{short_url}')
 def get_original_url(short_url: str):
-    # if short url does not exist in database, return 404:
-    if short_url not in temp_db:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No URL found for {short_url} found.")
-    return {"message": f"This is the original url: {temp_db[short_url]}."}
+    # if short_url does not exist in database, return 404:
+    if Database.exists(short_url):
+        return Database.get(short_url)
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No URL for short url: `{short_url}` found.")
 
 # POST /shorten_url(url, short_url: optional) : This endpoint creates a shortened version of a given URL. 
 # Optionally, users can also provide a custom short_url
@@ -38,8 +40,8 @@ def get_original_url(short_url: str):
 @router.post('/shorten_url')
 def shorten_url(url: URL):
     # Check if the short url is already in the database
-    if url.short_url in temp_db:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Short URL {url.short_url} already exists.")   
+    if url.short_url and Database.exists(url.short_url):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Short URL {url.short_url} already exists. Try a different short url.")   
 
     # Check if the url is a valid url
     if not validators.url(url.long_url):
@@ -50,5 +52,5 @@ def shorten_url(url: URL):
         url.short_url = generate_short_url(url.long_url)
 
     # Add the urls to the database
-    temp_db[url.short_url] = url.long_url
+    Database.create(url.short_url, url.long_url)
     return {"Success": f"url to be shortened: url={url.long_url}, short_url={url.short_url}"}
