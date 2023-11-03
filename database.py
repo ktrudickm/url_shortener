@@ -11,7 +11,7 @@ class Database(URLModel):
 
     def get(short_url: str):
         response = connection.get_item(table_name=table, hash_key=short_url)
-        return response["Item"]['long_url']
+        return response["Item"]['long_url']['S']
 
     def create(short_url: str, long_url: str):
         URLModel(short_url=short_url, long_url=long_url).save()
@@ -31,4 +31,6 @@ class Database(URLModel):
             return 'Item' in response
         except DoesNotExist:
             return False
- 
+    
+    def delete(short_url):
+        URLModel.delete(short_url)

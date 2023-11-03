@@ -58,3 +58,11 @@ def shorten_url(url: URL):
     # Add the urls to the database
     Database.create(url.short_url, url.long_url)
     return {"Success": f"url to be shortened: url={url.long_url}, short_url={url.short_url}"}
+
+@router.delete('/delete/{short_url}')
+def delete_url(short_url: str):
+    if Database.exists(short_url):
+        Database.delete(short_url)
+        return {"Success": f"Deleted url with short url: {short_url}"}
+    else:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"No URL for short url: `{short_url}` found.")
