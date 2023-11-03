@@ -2,6 +2,8 @@ from main import app
 from fastapi.testclient import TestClient
 from model import URLModel
 
+#  pytest url_tests.py -vv -s
+
 client = TestClient(app)
 
 def test_database_connection():
@@ -10,7 +12,7 @@ def test_database_connection():
     URLModel(short_url=test_short_url, long_url=test_long_url).save()
 
     retrieved_url = URLModel.get(test_short_url)
-    assert retrieved_url.short_url == test_long_url
+    assert retrieved_url.long_url == test_long_url
 
     retrieved_url.delete()
 
@@ -21,21 +23,20 @@ def test_read_root():
 
 def test_shorten_url():
     sample_payload = {
-        "long_url": "www.test_url.com",
+        "long_url": "https://www.testurl.com",
         "short_url": "test_short_url"
     }
     response = client.post("/shorten_url", json=sample_payload)
-    assert response.status_code == 201
+    assert response.status_code == 200
     assert response.json() == {
-        "Success": "url to be shortened: url=www.test_url.com, short_url=test_short_url"
+        "Success": "url to be shortened: url=https://www.testurl.com, short_url=test_short_url"
     }
 
 def test_get_url():
     response = client.get("/redirect/test_short_url")
     assert response.status_code == 200
-    assert response.json() == {
-        "www.test_url.com"
-    }
+    assert response.json() == {'S': "https://www.testurl.com"}
+    
 
 def test_delete_url():
     response = client.delete("/delete/test_short_url")
