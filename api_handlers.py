@@ -1,4 +1,5 @@
 from fastapi import APIRouter, status, HTTPException
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from typing import Optional
 import validators
@@ -6,9 +7,6 @@ from utils.uuid_generator import generate_short_url
 from database import Database
 
 router = APIRouter()
-
-# Temporary database for testing routes
-temp_db = {'test123': 'https://www.google.com', 'ae184bc7': 'https://www.youtube.com'}
 
 # Define a URL model with long and short URL attributes
 class URL(BaseModel):
@@ -31,12 +29,15 @@ def get_original_url(short_url: str):
     # if short_url does not exist in database, return 404:
     if Database.exists(short_url):
         return Database.get(short_url)
+    
+        # TODO: redirect to the original url
+        # return RedirectResponse(Database.get(short_url)['S'])
+        
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"No URL for short url: `{short_url}` found.")
 
 # POST /shorten_url(url, short_url: optional) : This endpoint creates a shortened version of a given URL. 
 # Optionally, users can also provide a custom short_url
-# Return 404 error if user gives a short url that is already being used
 @router.post('/shorten_url')
 def shorten_url(url: URL):
     # Check if the short url is already in the database
@@ -59,6 +60,7 @@ def shorten_url(url: URL):
     Database.create(url.short_url, url.long_url)
     return {"Success": f"url to be shortened: url={url.long_url}, short_url={url.short_url}"}
 
+# Delete route used for testing purposes
 @router.delete('/delete/{short_url}')
 def delete_url(short_url: str):
     if Database.exists(short_url):
