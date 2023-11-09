@@ -1,6 +1,7 @@
 from main import app
 from fastapi.testclient import TestClient
 from model import URLModel
+from fastapi.responses import RedirectResponse
 
 #  pytest url_tests.py -vv -s
 
@@ -33,9 +34,10 @@ def test_shorten_url():
     }
 
 def test_get_url():
-    response = client.get("/redirect/test_short_url")
+    response = client.get("/redirect/test_short_url", allow_redirects=False)
     assert response.status_code == 200
-    assert response.json() == {'S': "https://www.testurl.com"}
+    assert response.headers['Location'] == "https://www.testurl.com"
+    # assert response.json() == {'S': "https://www.testurl.com"}
     
 
 def test_delete_url():

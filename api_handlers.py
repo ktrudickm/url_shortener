@@ -28,10 +28,7 @@ def list_urls():
 def get_original_url(short_url: str):
     # if short_url does not exist in database, return 404:
     if Database.exists(short_url):
-        return Database.get(short_url)
-    
-        # TODO: redirect to the original url
-        # return RedirectResponse(Database.get(short_url)['S'])
+        return RedirectResponse(Database.get(short_url)['S'], status_code = 200)
         
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"No URL for short url: `{short_url}` found.")
