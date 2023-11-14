@@ -1,6 +1,6 @@
 from main import app
 from fastapi.testclient import TestClient
-from model import URLModel
+from models.model import URLModel
 from fastapi.responses import RedirectResponse
 
 #  pytest url_tests.py -vv -s

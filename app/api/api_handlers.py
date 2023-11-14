@@ -3,8 +3,9 @@ from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from typing import Optional
 import validators
+# from utils.uuid_generator import generate_short_url
 from utils.uuid_generator import generate_short_url
-from database import Database
+from service.database import Database
 
 router = APIRouter()
 
@@ -28,7 +29,8 @@ def list_urls():
 def get_original_url(short_url: str):
     # if short_url does not exist in database, return 404:
     if Database.exists(short_url):
-        return RedirectResponse(Database.get(short_url)['S'], status_code = 200)
+        print(Database.get(short_url)['S'])
+        return RedirectResponse(Database.get(short_url)['S'], status_code = 302)
         
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"No URL for short url: `{short_url}` found.")
