@@ -1,6 +1,6 @@
 # URL Shortener
 
-This is a simple URL shortener application built with FastAPI and DynamoDB.
+This is a URL shortener application built with FastAPI and DynamoDB.
 
 ## Getting Started
 
