@@ -37,7 +37,6 @@ def test_get_url():
     response = client.get("/redirect/test_short_url", allow_redirects=False)
     assert response.status_code == 302
     assert response.headers['Location'] == "https://www.testurl.com"
-    # assert response.json() == {'S': "https://www.testurl.com"}
     
 
 def test_delete_url():
