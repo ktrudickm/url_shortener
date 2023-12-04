@@ -3,7 +3,10 @@ from pynamodb.connection import Connection
 from pynamodb.exceptions import DoesNotExist
 
 table = URLModel.Meta.table_name
-connection = Connection(host='http://localhost:8000')
+# to run locally: 
+# connection = Connection(host='http://localhost:8000')
+# to run on AWS:
+connection = Connection()
 
 class Database(URLModel):
     def list_urls():
@@ -28,4 +31,4 @@ class Database(URLModel):
             return False
     
     def delete(short_url):
-        connection.delete_item(table_name=table, hash_key=short_url)
+            connection.delete_item(table_name=table, hash_key=short_url)
