@@ -6,6 +6,8 @@ app = FastAPI()
 
 app.include_router(router)
 
+
+
 # Run the server with: uvicorn main:app --reload
 # if __name__ == "__main__":
 #     import uvicorn
