@@ -3,9 +3,8 @@ from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from typing import Optional
 import validators
-# from utils.uuid_generator import generate_short_url
-from utils.uuid_generator import generate_short_url
-from service.database import Database
+from app.utils.uuid_generator import generate_short_url
+from app.service.database import Database
 
 router = APIRouter()
 
@@ -67,4 +66,7 @@ def delete_url(short_url: str):
         return {"short_url": {short_url}}
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"No URL for short url: `{short_url}` found.")
-    # return Database.delete(short_url)
+    
+# @router.put('/update/{short_url}')
+# def
+

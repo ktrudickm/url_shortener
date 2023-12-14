@@ -1,12 +1,10 @@
 from fastapi import FastAPI
-from api.api_handlers import router
+from app.api.api_handlers import router
 
 
 app = FastAPI()
 
 app.include_router(router)
-
-
 
 # Run the server with: uvicorn main:app --reload
 # if __name__ == "__main__":

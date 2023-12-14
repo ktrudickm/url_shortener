@@ -1,4 +1,4 @@
-from models.model import URLModel
+from app.models.model import URLModel
 from pynamodb.connection import Connection
 from pynamodb.exceptions import DoesNotExist
 from pynamodb.exceptions import DeleteError
