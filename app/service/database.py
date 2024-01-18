@@ -1,6 +1,7 @@
-from models.model import URLModel
+from app.models.model import URLModel
 from pynamodb.connection import Connection
 from pynamodb.exceptions import DoesNotExist
+from pynamodb.exceptions import DeleteError
 
 table = URLModel.Meta.table_name
 # to run locally: 
@@ -31,4 +32,8 @@ class Database(URLModel):
             return False
     
     def delete(short_url):
-            connection.delete_item(table_name=table, hash_key=short_url)
+            # connection.delete_item(table_name=table, hash_key=short_url)
+            try:
+                connection.delete_item(table_name=table, hash_key=short_url)
+            except DeleteError as e:
+                print(f"Failed to delete item: {e}")
