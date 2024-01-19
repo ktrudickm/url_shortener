@@ -24,7 +24,7 @@ You can install the Python dependencies by running:
 pip install fastapi uvicorn pynamodb pytest
 ```
 
-## Running the Application
+## Running the Application/Setup
 
 ### Running Locally
 
@@ -71,6 +71,46 @@ You can run the tests for the application by navigating to url_shortener/app dir
 ```bash
 pytest url_tests.py -vv -s
 ```
+
+## Usage
+
+Typer was used to build out the CLI for this project. Below are the available commands to use the app.
+
+#### List all URLs
+
+To display a list of all shortened URLs:
+
+```bash
+python3 cli.py list-urls
+```
+
+#### Shorten a URL
+
+To shorten a url, a long url must always be provided. The short url is optional - if omitting a short url, just omit the 'short url' altogether from the command.
+
+```bash
+python3 cli.py shorten 'long url' 'short url'
+```
+
+#### Lookup a URL
+
+To retrieve the long URL associated with a short URL:
+
+```bash
+python3 cli.py lookup 'short url'
+```
+
+#### Delete a URL
+
+To delete a short URL and its associated long URL:
+
+```bash
+python3 cli.py delete 'short url'
+```
+
+#### Note
+
+Ensure that the Docker container is running before using the CLI commands.
 
 ## License
 
