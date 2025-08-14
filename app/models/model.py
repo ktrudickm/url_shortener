@@ -5,7 +5,7 @@ from pynamodb.attributes import UnicodeAttribute
 # layer of abstraction between the database and the application
 class URLModel(Model):
     class Meta:
-        region = 'us-east-1'
+        region = 'us-east-2'
         # host = 'http://localhost:8000'
         table_name = 'url-table'
     short_url = UnicodeAttribute(hash_key=True)
@@ -13,3 +13,4 @@ class URLModel(Model):
 
 if not URLModel.exists():
     URLModel.create_table(read_capacity_units=1, write_capacity_units=1)
+    time.sleep(5)
