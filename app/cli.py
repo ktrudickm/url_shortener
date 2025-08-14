@@ -13,6 +13,8 @@ def shorten(original: str, short: Annotated[Optional[str], typer.Argument()] = N
         response = requests.post("http://localhost:80/shorten_url", json={"long_url": original})
     else:
         response = requests.post("http://localhost:80/shorten_url", json={"long_url": original, "short_url": short})
+    print(f"Response status code: {response.status_code}")
+    print(f"Response text: {response.text}")
     if response.status_code == 200:
         typer.echo(f"Success! The shortened URL: {response.json()['short_url']}")
     else:

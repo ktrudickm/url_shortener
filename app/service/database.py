@@ -1,39 +1,38 @@
 from app.models.model import URLModel
-from pynamodb.connection import Connection
 from pynamodb.exceptions import DoesNotExist
-from pynamodb.exceptions import DeleteError
 
-table = URLModel.Meta.table_name
-# to run locally: 
-# connection = Connection(host='http://localhost:8000')
-# to run on AWS:
-connection = Connection()
-
-class Database(URLModel):
+class Database:
+    @staticmethod
     def list_urls():
         urls = {}
         for item in URLModel.scan():
             urls[item.short_url] = item.long_url
         return urls
 
+    @staticmethod
     def get(short_url: str):
-        response = connection.get_item(table_name=table, hash_key=short_url)
-        return response["Item"]['long_url']
+        try:
+            url_model = URLModel.get(short_url)
+            return url_model.long_url
+        except DoesNotExist:
+            return None
 
+    @staticmethod
     def create(short_url: str, long_url: str):
         URLModel(short_url=short_url, long_url=long_url).save()
- 
 
+    @staticmethod
     def exists(short_url):
         try:
-            response = connection.get_item(table_name=table, hash_key=short_url)
-            return 'Item' in response
+            URLModel.get(short_url)
+            return True
         except DoesNotExist:
             return False
-    
+
+    @staticmethod
     def delete(short_url):
-            # connection.delete_item(table_name=table, hash_key=short_url)
-            try:
-                connection.delete_item(table_name=table, hash_key=short_url)
-            except DeleteError as e:
-                print(f"Failed to delete item: {e}")
+        try:
+            url_model = URLModel.get(short_url)
+            url_model.delete()
+        except DoesNotExist as e:
+            print(f"Failed to delete item: {e}")
