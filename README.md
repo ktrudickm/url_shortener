@@ -44,7 +44,7 @@ pip install fastapi uvicorn pynamodb pytest
     uvicorn main:app --reload
     ```
 
-### Running with AWS & Docker
+### Running with AWS & Docker Locally
 
 1. Build Docker Image
 
