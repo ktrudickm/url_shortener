@@ -3,12 +3,11 @@ import requests
 import webbrowser
 from typing import Optional
 from typing_extensions import Annotated
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
+#BASE_URL = "http://localhost:80"
 
-BASE_URL = os.getenv("BASE_URL", "http://localhost:80")
+# App Runner Service Url
+BASE_URL = "https://qdqpn8aazn.us-east-2.awsapprunner.com"
 app = typer.Typer()
 
 @app.command()
