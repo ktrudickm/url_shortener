@@ -64,6 +64,40 @@ pip install fastapi uvicorn pynamodb pytest
 
     Now, you can navigate to http://0.0.0.0:80/ in your web browser to see the application in action. Postman can be used to utilize endpoints.
 
+### Pushing New Image with Latest Changes/Updates to ECR for App Runner
+
+1. Build the image:
+    ```bash
+    docker build . -t url_project 
+    ```
+
+2. Tag the image:
+    ```bash
+    docker tag url_project:latest <aws-account-number>.dkr.ecr.us-east-2.amazonaws.com/<ecr-name>:latest
+    ```
+
+3. Push the image:
+    ```bash
+    docker push <aws-account-number>.dkr.ecr.us-east-2.amazonaws.com/<ecr-name>:latest
+    ```
+
+4. Update App Runner with new image:
+    ```bash
+    aws apprunner update-service \
+    --service-arn <apprunner-service-arn> \
+    --source-configuration '{
+        "ImageRepository": {
+            "ImageIdentifier": "<aws-account-number>.dkr.ecr.us-east-2.amazonaws.com/<ecr-name>>:latest",
+            "ImageRepositoryType": "ECR",
+            "ImageConfiguration": {
+                "Port": "80"
+            }
+        }
+    }' \
+    --region us-east-2
+    ```
+
+
 ### Running the Tests
 
 You can run the tests for the application by navigating to url_shortener/app directory and running:
