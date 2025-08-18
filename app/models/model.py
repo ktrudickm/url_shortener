@@ -11,6 +11,6 @@ class URLModel(Model):
     short_url = UnicodeAttribute(hash_key=True)
     long_url = UnicodeAttribute()
 
-if not URLModel.exists():
-    URLModel.create_table(read_capacity_units=1, write_capacity_units=1)
-    time.sleep(5)
+# if not URLModel.exists():
+#     URLModel.create_table(read_capacity_units=1, write_capacity_units=1)
+#     time.sleep(5)
