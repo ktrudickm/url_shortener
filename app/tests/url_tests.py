@@ -28,7 +28,7 @@ def test_shorten_url():
         "long_url": "https://www.testurl.com",
         "short_url": "test_short_url"
     }
-    response = client.post("/shorten_url", json=sample_payload)
+    response = client.post("/shorten", json=sample_payload)
     assert response.status_code == 200
     assert response.json() == {
         "short_url": ["test_short_url"], "original_url": ["https://www.testurl.com"]
@@ -40,7 +40,7 @@ def test_invalid_url():
         "long_url": "htps:/testurl",
         "short_url": "test_url"
     }
-    response = client.post("/shorten_url", json=sample_payload)
+    response = client.post("/shorten", json=sample_payload)
     assert response.status_code == 400
     assert response.json() == {
         "detail": "Error: Invalid URL."
@@ -53,7 +53,7 @@ def test_duplicate_short_url():
         "long_url": "https://www.testurl.com",
         "short_url": "test_short_url"
     }
-    response = client.post("/shorten_url", json=sample_payload)
+    response = client.post("/shorten", json=sample_payload)
     assert response.status_code == 400
     assert response.json() == {
         "detail": "Short URL test_short_url already exists. Try a different short url."
@@ -61,13 +61,13 @@ def test_duplicate_short_url():
 
 # Test successfully retrieving the original url from a short url
 def test_get_url():
-    response = client.get("/redirect/test_short_url", allow_redirects=False)
+    response = client.get("/test_short_url", allow_redirects=False)
     assert response.status_code == 302
     assert response.headers['Location'] == "https://www.testurl.com"
     
 # Test retrieving a short url that does not exist
 def test_short_not_found():
-    response = client.get("/redirect/test_short")
+    response = client.get("/test_short")
     assert response.status_code == 400
     assert response.json() == {
         "detail": "No URL for short url: `test_short` found."
@@ -75,7 +75,7 @@ def test_short_not_found():
 
 # Test successfully deleting a short url
 def test_delete_url():
-    response = client.delete("/delete/test_short_url")
+    response = client.delete("/test_short_url/delete")
     assert response.status_code == 200
     assert response.json() == {
        "short_url": ["test_short_url"]
@@ -83,7 +83,7 @@ def test_delete_url():
 
 # Test deleting a short url that does not exist
 def test_delete_url_not_found():
-    response = client.delete("/delete/test_short")
+    response = client.delete("/test_short/delete")
     assert response.status_code == 400
     assert response.json() == {
         "detail": "No URL for short url: `test_short` found."

@@ -24,7 +24,7 @@ def list_urls():
     return Database.list_urls()
 
 # GET - This endpoint takes a short_url as a parameter and returns the original URL.
-@router.get('/redirect/{short_url}')
+@router.get('/{short_url}')
 def get_original_url(short_url: str):
     # if short_url does not exist in database, return 404:
     if Database.exists(short_url):
@@ -35,7 +35,7 @@ def get_original_url(short_url: str):
 
 # POST - This endpoint creates a shortened version of a given URL. 
 # Users can also provide a custom short_url
-@router.post('/shorten_url')
+@router.post('/shorten')
 def shorten_url(url: URL):
     # Check if the short url is already in the database
     if url.short_url and Database.exists(url.short_url):
@@ -58,7 +58,7 @@ def shorten_url(url: URL):
     return {"short_url": {url.short_url}, "original_url": {url.long_url}}
 
 # Delete route used for testing purposes
-@router.delete('/delete/{short_url}')
+@router.delete('/{short_url}/delete')
 def delete_url(short_url: str):
     if Database.exists(short_url):
         Database.delete(short_url)
