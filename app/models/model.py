@@ -10,7 +10,3 @@ class URLModel(Model):
         table_name = 'url-table'
     short_url = UnicodeAttribute(hash_key=True)
     long_url = UnicodeAttribute()
-
-# if not URLModel.exists():
-#     URLModel.create_table(read_capacity_units=1, write_capacity_units=1)
-#     time.sleep(5)

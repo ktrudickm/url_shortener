@@ -1,14 +1,10 @@
-# from app.main import app
 from fastapi.testclient import TestClient
 # from app.models.model import URLModel
+# from app.main import app
 from fastapi.responses import RedirectResponse
 from moto import mock_aws
 import time
 import pytest
-
-#  pytest url_tests.py -vv -s
-
-# client = TestClient(app)
 
 
 # ------------------------ Setup the mock DynamoDB ------------------------
