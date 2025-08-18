@@ -19,8 +19,6 @@ def client():
         from app.models.model import URLModel
         from app.main import app
 
-        URLModel.Meta.host = "http://localhost:5000"
-
         # Create the mock table
         if not URLModel.exists():
             URLModel.create_table(read_capacity_units=1, write_capacity_units=1)
