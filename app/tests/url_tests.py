@@ -2,7 +2,7 @@
 from fastapi.testclient import TestClient
 # from app.models.model import URLModel
 from fastapi.responses import RedirectResponse
-from moto.dynamodb import mock_dynamodb
+from moto import mock_dynamodb
 import time
 import pytest
 
