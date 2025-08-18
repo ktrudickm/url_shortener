@@ -2,7 +2,7 @@
 from fastapi.testclient import TestClient
 # from app.models.model import URLModel
 from fastapi.responses import RedirectResponse
-from moto import mock_dynamodb
+from moto.dynamodb import mock_dynamodb
 import time
 import pytest
 
@@ -30,6 +30,7 @@ def client():
 # ------------------------ Tests ------------------------
 
 def test_database_connection():
+    from app.models.model import URLModel
     test_short_url = "test1234"
     test_long_url = "https://www.test.com"
     URLModel(short_url=test_short_url, long_url=test_long_url).save()
