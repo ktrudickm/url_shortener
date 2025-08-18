@@ -13,18 +13,18 @@ import pytest
 
 # ------------------------ Setup the mock DynamoDB ------------------------
 
-@mock_dynamodb2
 @pytest.fixture(scope="module")
-def client_and_table():
-    from app.models.model import URLModel
-    from app.main import app
+def client():
+    with mock_dynamodb2():
+        from app.models.model import URLModel
+        from app.main import app
 
-    # Create mock table
-    if not URLModel.exists():
-        URLModel.create_table(read_capacity_units=1, write_capacity_units=1)
-        time.sleep(1)  # Let the table "create"
+        # Create the mock table
+        if not URLModel.exists():
+            URLModel.create_table(read_capacity_units=1, write_capacity_units=1)
+            time.sleep(1)  # ensure table is ready
 
-    yield TestClient(app)
+        yield TestClient(app)
 
 
 # ------------------------ Tests ------------------------
