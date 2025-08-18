@@ -2,10 +2,33 @@ from app.main import app
 from fastapi.testclient import TestClient
 from app.models.model import URLModel
 from fastapi.responses import RedirectResponse
+from moto import mock_dynamodb2
+import time
+import pytest
 
 #  pytest url_tests.py -vv -s
 
 client = TestClient(app)
+
+
+# ------------------------ Setup the mock DynamoDB ------------------------
+
+@mock_dynamodb2
+def setup_table():
+    """Create the mock DynamoDB table for testing."""
+    if not URLModel.exists():
+        URLModel.create_table(read_capacity_units=1, write_capacity_units=1)
+        time.sleep(1)  # Give moto some time to initialize
+
+@pytest.fixture(autouse=True)
+def setup_dynamodb():
+    """Fixture that runs before every test automatically."""
+    with mock_dynamodb2():
+        setup_table()
+        yield
+
+
+# ------------------------ Tests ------------------------
 
 def test_database_connection():
     test_short_url = "test1234"
