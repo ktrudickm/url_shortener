@@ -8,24 +8,23 @@ import pytest
 
 #  pytest url_tests.py -vv -s
 
-client = TestClient(app)
+# client = TestClient(app)
 
 
 # ------------------------ Setup the mock DynamoDB ------------------------
 
 @mock_dynamodb2
-def setup_table():
-    """Create the mock DynamoDB table for testing."""
+@pytest.fixture(scope="module")
+def client_and_table():
+    from app.models.model import URLModel
+    from app.main import app
+
+    # Create mock table
     if not URLModel.exists():
         URLModel.create_table(read_capacity_units=1, write_capacity_units=1)
-        time.sleep(1)  # Give moto some time to initialize
+        time.sleep(1)  # Let the table "create"
 
-@pytest.fixture(autouse=True)
-def setup_dynamodb():
-    """Fixture that runs before every test automatically."""
-    with mock_dynamodb2():
-        setup_table()
-        yield
+    yield TestClient(app)
 
 
 # ------------------------ Tests ------------------------
