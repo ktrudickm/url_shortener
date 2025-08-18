@@ -1,6 +1,6 @@
-from app.main import app
+# from app.main import app
 from fastapi.testclient import TestClient
-from app.models.model import URLModel
+# from app.models.model import URLModel
 from fastapi.responses import RedirectResponse
 from moto import mock_dynamodb2
 import time
