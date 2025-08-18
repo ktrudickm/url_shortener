@@ -15,9 +15,9 @@ app = typer.Typer()
 def shorten(original: str, short: Annotated[Optional[str], typer.Argument()] = None):
     """Shorten a URL via the API."""
     if short is None:
-        response = requests.post(f"{BASE_URL}/shorten_url", json={"long_url": original})
+        response = requests.post(f"{BASE_URL}/shorten", json={"long_url": original})
     else:
-        response = requests.post(f"{BASE_URL}/shorten_url", json={"long_url": original, "short_url": short})
+        response = requests.post(f"{BASE_URL}/shorten", json={"long_url": original, "short_url": short})
     print(f"Response status code: {response.status_code}")
     print(f"Response text: {response.text}")
     if response.status_code == 200:
@@ -28,7 +28,7 @@ def shorten(original: str, short: Annotated[Optional[str], typer.Argument()] = N
 @app.command()
 def lookup(short_url: str):
     """Lookup a short url via the API."""
-    response = requests.get(f"{BASE_URL}/redirect/{short_url}", allow_redirects=False)
+    response = requests.get(f"{BASE_URL}/{short_url}", allow_redirects=False)
     if response.status_code == 302:
         webbrowser.open(response.headers['Location'])
     else:
@@ -46,7 +46,7 @@ def list_all():
 @app.command()
 def delete(short_url: str):
     """Delete a short url via the API."""
-    response = requests.delete(f"{BASE_URL}/delete/{short_url}")
+    response = requests.delete(f"{BASE_URL}/{short_url}/delete")
     if response.status_code == 200:
         typer.echo(f"Successfully deleted `{response.json()['short_url']}`")
     else:
