@@ -10,11 +10,12 @@ These instructions will get you a copy of the project up and running on your loc
 
 - Java Runtime Environment (JRE) for running DynamoDB Local
 - AWS account, for non-local Database Connections
-- Python 3.6 or later
+- Python 3.9
 - FastAPI
 - Uvicorn, an ASGI server to serve your application
 - PynamoDB, a Pythonic interface for Amazon DynamoDB
 - Pytest, for running tests
+- Moto, for mocking DB connection for testing
 - Docker, for containerization
 - Optional: Postman, for endpoint testing
 
@@ -66,7 +67,7 @@ pip install fastapi uvicorn pynamodb pytest
 
 ### Pushing New Image with Latest Changes/Updates to ECR for App Runner
 
-1.Authenticate to AWS via cli
+1.Authenticate to AWS via cli:
     ```bash
     aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <account-number>.dkr.ecr.<region>.amazonaws.com
     ```
@@ -110,6 +111,8 @@ You can run the tests for the application by navigating to url_shortener/app dir
 ```bash
 pytest url_tests.py -vv -s
 ```
+
+Tests are also automatically ran via Github Workflows every time a commit is run. 
 
 ## Usage
 
