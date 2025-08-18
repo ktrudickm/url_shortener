@@ -8,3 +8,5 @@ validators
 pynamodb
 requests
 python-dotenv
+moto
+boto3

@@ -1,13 +1,32 @@
-from app.main import app
 from fastapi.testclient import TestClient
-from app.models.model import URLModel
+# from app.models.model import URLModel
+# from app.main import app
 from fastapi.responses import RedirectResponse
+from moto import mock_aws
+import time
+import pytest
 
-#  pytest url_tests.py -vv -s
 
-client = TestClient(app)
+# ------------------------ Setup the mock DynamoDB ------------------------
 
-def test_database_connection():
+@pytest.fixture(scope="module")
+def client():
+    with mock_aws():
+        from app.models.model import URLModel
+        from app.main import app
+
+        # Create the mock table
+        if not URLModel.exists():
+            URLModel.create_table(read_capacity_units=1, write_capacity_units=1)
+            time.sleep(1)  # ensure table is ready
+
+        yield TestClient(app)
+
+
+# ------------------------ Tests ------------------------
+
+def test_database_connection(client):
+    from app.models.model import URLModel
     test_short_url = "test1234"
     test_long_url = "https://www.test.com"
     URLModel(short_url=test_short_url, long_url=test_long_url).save()
@@ -17,13 +36,13 @@ def test_database_connection():
 
     retrieved_url.delete()
 
-def test_read_root():
+def test_read_root(client):
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {"message": "This is the url-shortener app."}
 
 # Test successful creation of short url
-def test_shorten_url():
+def test_shorten_url(client):
     sample_payload = {
         "long_url": "https://www.testurl.com",
         "short_url": "test_short_url"
@@ -35,7 +54,7 @@ def test_shorten_url():
     }
 
 # Test invalid url attempting to be shortened
-def test_invalid_url():
+def test_invalid_url(client):
     sample_payload = {
         "long_url": "htps:/testurl",
         "short_url": "test_url"
@@ -48,7 +67,7 @@ def test_invalid_url():
 
 
 # Test attempting to shorten a url that already exists
-def test_duplicate_short_url():
+def test_duplicate_short_url(client):
     sample_payload = {
         "long_url": "https://www.testurl.com",
         "short_url": "test_short_url"
@@ -60,13 +79,13 @@ def test_duplicate_short_url():
     }
 
 # Test successfully retrieving the original url from a short url
-def test_get_url():
+def test_get_url(client):
     response = client.get("/test_short_url", allow_redirects=False)
     assert response.status_code == 302
     assert response.headers['Location'] == "https://www.testurl.com"
     
 # Test retrieving a short url that does not exist
-def test_short_not_found():
+def test_short_not_found(client):
     response = client.get("/test_short")
     assert response.status_code == 400
     assert response.json() == {
@@ -74,7 +93,7 @@ def test_short_not_found():
     }
 
 # Test successfully deleting a short url
-def test_delete_url():
+def test_delete_url(client):
     response = client.delete("/test_short_url/delete")
     assert response.status_code == 200
     assert response.json() == {
@@ -82,7 +101,7 @@ def test_delete_url():
     }
 
 # Test deleting a short url that does not exist
-def test_delete_url_not_found():
+def test_delete_url_not_found(client):
     response = client.delete("/test_short/delete")
     assert response.status_code == 400
     assert response.json() == {
