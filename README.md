@@ -66,22 +66,27 @@ pip install fastapi uvicorn pynamodb pytest
 
 ### Pushing New Image with Latest Changes/Updates to ECR for App Runner
 
-1. Build the image:
+1.Authenticate to AWS via cli
+    ```bash
+    aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <account-number>.dkr.ecr.<region>.amazonaws.com
+    ```
+
+2. Build the image:
     ```bash
     docker build . -t url_project 
     ```
 
-2. Tag the image:
+3. Tag the image:
     ```bash
     docker tag url_project:latest <aws-account-number>.dkr.ecr.us-east-2.amazonaws.com/<ecr-name>:latest
     ```
 
-3. Push the image:
+4. Push the image:
     ```bash
     docker push <aws-account-number>.dkr.ecr.us-east-2.amazonaws.com/<ecr-name>:latest
     ```
 
-4. Update App Runner with new image:
+5. Update App Runner with new image:
     ```bash
     aws apprunner update-service \
     --service-arn <apprunner-service-arn> \
